@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ArticleRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[UniqueEntity(fields: ['title','description'], ignoreNull: 'description')]
+#[ORM\HasLifecycleCallbacks]
 class Article
 {
     #[ORM\Id]
@@ -14,21 +17,31 @@ class Article
     #[ORM\Column]
     private ?int $id = null; //Identifiant unique auto-généré
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, unique: true)]  //Le titre "{{ value }}" a déjà été utilisé pour un autre arcticle.
     private ?string $title = null; //Libellé
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null; //description
 
-     /**
-     * @ORM\Column(type="datetime_immutable", options={"default": "CURRENT_TIMESTAMP"})
-     */
-    private ?\DateTimeInterface $created_date = null; //date de création
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private $createdAt = null; //date de création
 
-     /**
-     * @ORM\Column(type="datetime_immutable", options={"default": "CURRENT_TIMESTAMP"})
-     */
-    private ?\DateTimeInterface $updated_date = null; //date de dernière modification
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private $updatedAt = null; //date de dernière modification
+    
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->updatedAt = new \DateTime();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -60,13 +73,7 @@ class Article
 
     public function getCreatedDate(): ?\DateTimeInterface
     {
-        return $this->created_date;
+        return $this->createdAt;
     }
 
-    public function setUpdatedDate(\DateTimeInterface $updated_date): static
-    {
-        $this->updated_date = $updated_date;
-
-        return $this;
-    }
 }

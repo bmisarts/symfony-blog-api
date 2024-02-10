@@ -17,6 +17,13 @@ framework:
     #fragments: true
     php_errors:
         log: true
+        
+    default_locale: fr
+    # Définir le format de réponse par défaut sur JSON
+    # Cela s'applique aux exceptions et aux réponses d'erreur
+        
+    serializer:
+        enabled: true
 
 when@test:
     framework:

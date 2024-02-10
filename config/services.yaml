@@ -23,3 +23,12 @@ services:
     App\EventListener\JsonResponseListener:
         tags:
             - { name: kernel.event_listener, event: kernel.view }
+
+    
+    # Autowiring par convention pour le répertoire Services
+    App\Services\:
+        resource: '../src/Services/'
+        
+    # Autowiring par convention pour le répertoire Repository
+    App\Repository\:
+        resource: '../src/Repository/'
