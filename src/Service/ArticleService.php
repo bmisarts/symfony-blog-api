@@ -28,9 +28,7 @@ class ArticleService
         foreach ($articles as $article) {
             $articleData[] = [
                 'id' => $article->getId(),
-                'title' => $article->getTitle(),
-                'description' => $article->getDescription(),
-                'created_date' => $article->getCreatedDate(),
+                'title' => $article->getTitle()
             ];
         }
         

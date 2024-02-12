@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ArticleRepository;
@@ -32,14 +33,14 @@ class Article
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->createdAt = new DateTimeImmutable();;
+        $this->updatedAt = new DateTimeImmutable();;
     }
 
     #[ORM\PreUpdate]
     public function setUpdatedAtValue(): void
     {
-        $this->updatedAt = new \DateTime();
+        $this->updatedAt = new DateTimeImmutable();;
     }
     
     public function getId(): ?int
@@ -74,17 +75,22 @@ class Article
 
         return $this;
     }
-    public function setCreatedDate(\DateTime $date): static
+    public function setCreatedDate(DateTimeImmutable $date): static
     {
         $this->createdAt = $date;
 
         return $this;
     }
 
-    public function getCreatedDate(): ?\DateTime
+    public function getCreatedDate(): ?string
     {
         // $this->createdAt;
-       return  new \DateTime($this->createdAt->format('Y-m-d H:i:s'));
+        return  $this->createdAt->format('D, d M Y H:i:s');
+    }
+    public function getUpdatedDate(): ?string
+    {
+        // $this->createdAt;
+        return  $this->updatedAt->format('D, d M Y H:i:s');
     }
 
 }

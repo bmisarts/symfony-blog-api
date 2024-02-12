@@ -50,6 +50,7 @@ class ArticleController extends AbstractController
                 'title' => $article->getTitle(),
                 'description' => $article->getDescription(),
                 'created_date' => $article->getCreatedDate(),
+                'updated_date' => $article->getUpdatedDate(),
             ];
         
             // Retourner l'article trouvé

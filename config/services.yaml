@@ -20,9 +20,15 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\EventListener\JsonResponseListener:
+    #Interception des requêtes et conversion en json 
+    App\Middleware\JsonResponseMiddleware:
         tags:
             - { name: kernel.event_listener, event: kernel.view }
+            
+    #Gestion des erreurs 404        
+    App\Middleware\NotFoundMiddleware:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
 
     
     # Autowiring du répertoire Services
