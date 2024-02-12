@@ -25,10 +25,16 @@ services:
             - { name: kernel.event_listener, event: kernel.view }
 
     
-    # Autowiring par convention pour le répertoire Services
-    App\Services\:
-        resource: '../src/Services/'
+    # Autowiring du répertoire Services
+    App\Service\:
+        resource: '../src/Service/'
         
-    # Autowiring par convention pour le répertoire Repository
-    App\Repository\:
-        resource: '../src/Repository/'
+    # Passage de l'argument repository au service crud des articles
+    App\Service\ArticleService:
+        arguments:
+            $articleRepository: '@App\Repository\ArticleRepository'
+            $entityManager: '@doctrine.orm.entity_manager'
+            
+     # Autowiring du répertoire Exception
+    App\Exception\:
+        resource: '../src/Exception/'

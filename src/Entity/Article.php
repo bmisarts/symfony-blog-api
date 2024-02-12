@@ -18,7 +18,7 @@ class Article
     private ?int $id = null; //Identifiant unique auto-généré
 
     #[ORM\Column(length: 255, unique: true)]  //Le titre "{{ value }}" a déjà été utilisé pour un autre arcticle.
-    private ?string $title = null; //Libellé
+    private ?string $title = null; //Titre
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null; //description
@@ -32,8 +32,8 @@ class Article
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     #[ORM\PreUpdate]
@@ -45,6 +45,10 @@ class Article
     public function getId(): ?int
     {
         return $this->id;
+    }
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getTitle(): ?string
@@ -70,10 +74,17 @@ class Article
 
         return $this;
     }
-
-    public function getCreatedDate(): ?\DateTimeInterface
+    public function setCreatedDate(\DateTime $date): static
     {
-        return $this->createdAt;
+        $this->createdAt = $date;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTime
+    {
+        // $this->createdAt;
+       return  new \DateTime($this->createdAt->format('Y-m-d H:i:s'));
     }
 
 }
