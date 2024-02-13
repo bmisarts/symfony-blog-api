@@ -1,0 +1,11 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Symfony Article API
+            description: Ce projet Symfony est une API permettant de gérer des articles.
+            version: 1.0.0
+    areas:
+        default:
+            path_patterns: [^/article]
+            documentation:
+                - '/api/doc' # Chemin de l'interface utilisateur de la documentation Swagger
