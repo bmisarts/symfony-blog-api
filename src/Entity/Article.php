@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ArticleRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
+
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[UniqueEntity(fields: ['title','description'], ignoreNull: 'description')]
 #[ORM\HasLifecycleCallbacks]
@@ -16,9 +19,11 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[OA\Property(description: 'Identifiant unique auto-généré')]
     private ?int $id = null; //Identifiant unique auto-généré
 
-    #[ORM\Column(length: 255, unique: true)]  //Le titre "{{ value }}" a déjà été utilisé pour un autre arcticle.
+    #[ORM\Column(length: 255, unique: true)]  //Titre unique et d'un arcticle.
+    #[OA\Property(description: 'Titre unique et d\'un arcticle.')]
     private ?string $title = null; //Titre
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

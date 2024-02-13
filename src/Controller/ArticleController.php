@@ -4,19 +4,24 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Service\ArticleService;
+use App\Repository\ArticleRepository;
 use App\Service\RequestValidationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Exception\Article\ExistingTitleException;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Length;
+
+//Importation des packages nelmio pour la documentation
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Exception\Article\ExistingTitleException;
+
+use OpenApi\Annotations as OA;
 
 class ArticleController extends AbstractController
 {
@@ -31,17 +36,64 @@ class ArticleController extends AbstractController
         $this->validator = $validator;
     }
 
+    /**
+     * Récupéreration d'un articles.
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des articles",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Response(
+     *     response=404,
+     *     description="Aucun article dans la base de données ne porte l'ID fourni en paramètre",
+     *     @OA\JsonContent(
+     *        type="string",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Tag(name="article_list")
+     */
     #[Route('/article', name: 'article_list', methods:['get'] )]
-    public function index(): JsonResponse
+    public function index(ArticleRepository $articleRepository, Request $request): JsonResponse
     {
-        $data = $this->articleService->all();
-        
-        //Retourner la liste des articles trouvés
-        return new JsonResponse($data, Response::HTTP_OK);
+        try{
+            $data = $this->articleService->all();
+            //Retourner la liste des articles trouvés
+            return new JsonResponse($data, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage(), get_class($e)], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    #[Route('/article/{id}', name: 'article_show', methods:['get'] )]
-    public function show(int $id): Response
+    /**
+     * Affichage d'un article dont l'ID est pris en paramètre.
+     *
+     * Cette route affiche la liste des articles recuperée en base de données.
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne l'article trouvé",
+     *     @OA\JsonContent(
+     *        type="Object",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Response(
+     *     response=404,
+     *     description="Aucun article dans la base de données ne porte l'ID fourni en paramètre",
+     *     @OA\JsonContent(
+     *        type="string",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Tag(name="article_show")
+     */
+    #[Route('/article/{id}', name: 'article_show', methods:['get'])]
+    public function show(int $id, ArticleRepository $articleRepository, Request $request): Response
     {
         try{
             $article = $this->articleService->show($id);
@@ -67,8 +119,38 @@ class ArticleController extends AbstractController
         }
     }
     
+    /**
+     * Création d'un nouvel article.
+     *
+     * @OA\RequestBody(
+     *     description: "Récupération des paramètres de la requête."
+     *     @OA\JsonContent(
+     *        properties (
+     *              @OA\Property(property="title", required=true, description="Le titre de l'article.", type="string"),
+     *              @A\Property(property="description", required=false, description="La description ou encore le message de l'article.", type="string"),
+     *         )
+     *     )
+     * )
+     * @OA\Response(
+     *     response=201,
+     *     description="Retourne l'article nouvellement créé.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Response(
+     *     response=409,
+     *     description="Conflit de titre avec un autre article existant.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Tag(name="article_create")
+     */
     #[Route('/article', name: 'article_create', methods:['post'] )]
-    public function create(Request $request, RequestValidationService $validationService): Response
+    public function create(RequestValidationService $validationService, Request $request): Response
     {
         $rules = [
             'title' => [
@@ -109,6 +191,36 @@ class ArticleController extends AbstractController
         return $this->json($article, Response::HTTP_CREATED);
     }
     
+    /**
+     * Modification d'un article.
+     *
+     * @OA\RequestBody(
+     *     description: "Récupération des paramètres de la requête."
+     *     @OA\JsonContent(
+     *        properties (
+     *              @OA\Property(property="title", required=true, description="Le titre de l'article.", type="string"),
+     *              @A\Property(property="description", required=false, description="La description ou encore le message de l'article.", type="string"),
+     *         )
+     *     )
+     * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne l'article nouvellement créé.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Response(
+     *     response=409,
+     *     description="Conflit de titre avec un autre article existant.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Tag(name="article_update")
+     */
     #[Route('/article/{id}', name: 'article_update', methods:['post'] )]
     public function update(Request $request, int $id, RequestValidationService $validationService): Response
     {
@@ -157,6 +269,26 @@ class ArticleController extends AbstractController
         return $this->json($article, Response::HTTP_OK);
     }
 
+    /**
+     * Suppression d'un article.
+     * @OA\Response(
+     *     response=204,
+     *     description="Retourne un contenu vide",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Response(
+     *     response=404,
+     *     description="Aucun article dans la base de données ne porte l'ID fourni en paramètre",
+     *     @OA\JsonContent(
+     *        type="string",
+     *        @OA\Items(ref=@Model(type=Article::class, groups={"full"}))
+     *     )
+     * )
+     * @OA\Tag(name="article_delete")
+     */
     #[Route('/article/{id}', name: 'article_delete', methods:['delete'] )]
     public function destroy(Request $request, int $id, RequestValidationService $validationService): Response
     {

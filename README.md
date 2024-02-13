@@ -6,7 +6,7 @@ Ce projet Symfony est une API permettant de gérer des articles.
 Assurez-vous d'avoir les éléments suivants installés sur votre système :
 
 - PHP 8.1
-- Composer 2.6.6 
+- Composer 2.6
 - Symphony CLI 6.4
 - MySQL ou tout autre système de gestion de base de données pris en charge par Symfony
 
@@ -45,12 +45,4 @@ symfony server:start
 
 ## Documentation de l'API
 
-La documentation de l'API est disponible aux adresses suivantes :
-- Format Web
-```
-http://localhost:8000/api/doc
-```
-- Format Json
-```
-http://localhost:8000/api/doc.json
-```
+La documentation de l'API sera disponible via [un page web](http://localhost:8000/api/doc) ou [au format de données json](http://localhost:8000/api/doc.json)
