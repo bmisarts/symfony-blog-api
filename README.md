@@ -41,8 +41,8 @@ php bin/console doctrine:migrations:migrate
 symfony server:start
 ```
 
-8. L'API sera accessible à l'adresse http://localhost:8000.
+8. L'API sera accessible à l'adresse http://127.0.0.1:8000.
 
 ## Documentation de l'API
 
-La documentation de l'API sera disponible via [un page web](http://localhost:8000/api/doc) ou [au format de données json](http://localhost:8000/api/doc.json)
+La documentation de l'API sera disponible via [un page web](http://127.0.0.1:8000/api/doc) ou [au format de données json](http://127.0.0.1:8000/api/doc.json)
