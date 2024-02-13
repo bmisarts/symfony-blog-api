@@ -10,7 +10,7 @@ Assurez-vous d'avoir les éléments suivants installés sur votre système :
 - Symphony CLI 6.4
 - MySQL ou tout autre système de gestion de base de données pris en charge par Symfony
 
-## Installation
+## Installation et configuration
 
 1. Clonez ce dépôt sur votre machine locale :
 ```
