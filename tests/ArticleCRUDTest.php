@@ -8,12 +8,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class ArticleCRUDTest extends WebTestCase
 {
 
-    public function testListArticles(): void
+    public function testList(): void
     {
         $client = static::createClient();
 
         // Envoi d'une requête GET pour récupérer la liste des articles
         $client->request('GET', '/article');
+        // Doctrine_Core::loadData(sfConfig::get('sf_test_dir').'/fixtures');
 
         // Vérifie que la requête a réussi (code de statut HTTP 200)
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
@@ -23,12 +24,12 @@ class ArticleCRUDTest extends WebTestCase
         $this->assertIsArray($responseData);
         // Ici, vous pouvez ajouter des assertions supplémentaires sur la structure ou les données des articles retournées
     }
-    public function testShowArticle(): void
+    public function testShow(): void
     {
         $client = static::createClient();
 
         // Suppose que vous avez un article existant avec l'ID 1
-        $articleId = 1;
+        $articleId = 2;
 
         // Envoi d'une requête GET pour afficher les détails de l'article
         $client->request('GET', '/article/' . $articleId);
@@ -41,7 +42,7 @@ class ArticleCRUDTest extends WebTestCase
         $this->assertIsArray($responseData);
         // Ici, vous pouvez ajouter des assertions supplémentaires sur la structure ou les données de l'article retournées
     }
-    public function testCreateArticle(): void
+    public function testCreate(): void
     {
         $client = static::createClient();
 
@@ -64,12 +65,12 @@ class ArticleCRUDTest extends WebTestCase
         $this->assertNotNull($article, 'L\'article devrait avoir été créé dans la base de données');
     }
     
-    public function testUpdateArticle(): void
+    public function testUpdate(): void
     {
         $client = static::createClient();
 
         // Suppose que vous avez un article existant avec l'ID 1
-        $articleId = 1;
+        $articleId = 3;
 
         // Les nouvelles données JSON pour la mise à jour de l'article
         $data = [
@@ -90,12 +91,12 @@ class ArticleCRUDTest extends WebTestCase
         $this->assertEquals('Nouveau titre', $article->getTitle());
         $this->assertEquals('Nouvelle description', $article->getDescription());
     }
-    public function testDeleteArticle(): void
+    public function testDelete(): void
     {
         $client = static::createClient();
 
         // Suppose que vous avez un article existant avec l'ID 1
-        $articleId = 1;
+        $articleId = 4;
 
         // Envoi d'une requête DELETE pour supprimer l'article
         $client->request('DELETE', '/article/' . $articleId);

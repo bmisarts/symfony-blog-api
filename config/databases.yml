@@ -1,0 +1,20 @@
+# config/databases.yml
+dev:
+  doctrine:
+    class: sfDoctrineDatabase
+ 
+test:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      # dsn: 'sqlite:///%kernel.project_dir%/var/database.db'
+      dsn: 'mysql:host=localhost;dbname=symfony_blog_api'
+ 
+all:
+  doctrine:
+    class: sfDoctrineDatabase
+    param:
+      # dsn: 'mysql:host=localhost;dbname=symfony_blog_api'
+      dsn: 'sqlite:///%kernel.project_dir%/var/database.db'
+      username: root
+      password: null
